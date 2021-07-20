@@ -16,60 +16,55 @@ var (
 	keySz        int  = 64
 	valueSz      int  = 10
 	dataCntRange int  = 10000
-	skip         int  = 1
 	batchCnt     int  = 1000
-	sync         bool = false
+	sync         bool = true
 )
 
 func main() {
-
-	leveldbTimes := make([]float64, 0, dataCntRange)
+	leveldbTimes := float64(0)
+	leveldbSpeeds := make([]float64, 0, dataCntRange)
 	for i := 1; i <= dataCntRange; i++ {
-		bt := bench_test(i * skip)
-		leveldbTimes = append(leveldbTimes, bt)
+		bs, bt := bench_test()
+		leveldbTimes += bt
+		leveldbSpeeds = append(leveldbSpeeds, bs)
 	}
 
-	for i := 0; i < len(leveldbTimes); i++ {
-		fmt.Printf("total: %d, badgerTime: %f μs/op",
-			(i+1)*batchCnt*skip, leveldbTimes[i])
+	for i := 0; i < dataCntRange; i++ {
+		fmt.Printf("total: %d, levelDBTime: %f μs/op",
+			(i+1)*batchCnt, leveldbSpeeds[i])
 	}
+	fmt.Println()
+	fmt.Printf("Usage Time: %f μs\n", leveldbTimes)
 }
 
-func bench_test(dataCnt int) (leveldbTime float64) {
-	total := dataCnt * batchCnt
-
+func bench_test() (leveldbSpeed, levelDBTime float64) {
 	db := GoLevelDbConn()
-	fmt.Println("LevelDB:")
-	lstart := time.Now()
 	ltotalWriteTime := float64(0)
-	for i := 0; i < dataCnt; i++ {
-		keyList := [][]byte{}
-		valueList := [][]byte{}
-		for j := 0; j < batchCnt; j++ {
-			keyList = append(keyList, RandStr(keySz))
-			valueList = append(valueList, RandStr(valueSz))
-		}
-		pstart := time.Now()
-		batch := new(leveldb.Batch)
-		for j := 0; j < batchCnt; j++ {
-			batch.Put(keyList[j], valueList[j])
-		}
-		pend := time.Since(pstart)
-		ltotalWriteTime = ltotalWriteTime + float64(pend.Microseconds())
-		wstart := time.Now()
-		err := db.Write(batch, &opt.WriteOptions{Sync: sync})
-		wend := time.Since(wstart)
-		if err != nil {
-			log.Fatal(err)
-		}
-		//fmt.Printf("badger write %d st data\n", i)
-		ltotalWriteTime = ltotalWriteTime + float64(wend.Microseconds())
+	keyList := [][]byte{}
+	valueList := [][]byte{}
+	for j := 0; j < batchCnt; j++ {
+		keyList = append(keyList, RandStr(keySz))
+		valueList = append(valueList, RandStr(valueSz))
 	}
-	ltotalWriteTime = ltotalWriteTime / float64(total)
-	//fmt.Printf("Total write time: %f μs/op\n", ltotalWriteTime)
-	fmt.Println("Total time: ", time.Since(lstart))
+	pstart := time.Now()
+	batch := new(leveldb.Batch)
+	for j := 0; j < batchCnt; j++ {
+		batch.Put(keyList[j], valueList[j])
+	}
+	pend := time.Since(pstart)
+	keyList = nil
+	valueList = nil
+	ltotalWriteTime += float64(pend.Microseconds())
+	wstart := time.Now()
+	err := db.Write(batch, &opt.WriteOptions{Sync: sync})
+	wend := time.Since(wstart)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ltotalWriteTime += float64(wend.Microseconds())
+	ltotalWriteSpeed := ltotalWriteTime / float64(batchCnt)
 	db.Close()
-	return ltotalWriteTime
+	return ltotalWriteSpeed, ltotalWriteTime
 }
 
 func GoLevelDbConn() *leveldb.DB {

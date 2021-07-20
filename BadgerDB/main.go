@@ -15,60 +15,56 @@ var (
 	keySz        int  = 64
 	valueSz      int  = 10
 	dataCntRange int  = 10000
-	skip         int  = 1
 	batchCnt     int  = 1000
-	sync         bool = false
+	sync         bool = true
 )
 
 func main() {
 
-	badgerTimes := make([]float64, 0, dataCntRange)
+	badgerTimes := float64(0)
+	badgerSpeeds := make([]float64, 0, dataCntRange)
 	for i := 1; i <= dataCntRange; i++ {
-		bt := bench_test(i * skip)
-		badgerTimes = append(badgerTimes, bt)
+		bs, bt := bench_test()
+		badgerTimes += bt
+		badgerSpeeds = append(badgerSpeeds, bs)
 	}
 
-	for i := 0; i < len(badgerTimes); i++ {
+	for i := 0; i < dataCntRange; i++ {
 		fmt.Printf("total: %d, badgerTime: %f μs/op",
-			(i+1)*batchCnt*skip, badgerTimes[i])
+			(i+1)*batchCnt, badgerSpeeds[i])
 	}
+	fmt.Println()
+	fmt.Printf("Usage Time: %f μs\n", badgerTimes)
 }
 
-func bench_test(dataCnt int) (badgerTime float64) {
-	total := dataCnt * batchCnt
-
+func bench_test() (badgerSpeed, badgerTime float64) {
 	db := BadgerConn()
-	fmt.Println("Badger:")
-	bstart := time.Now()
 	btotalWriteTime := float64(0)
-	for i := 0; i < dataCnt; i++ {
-		keyList := [][]byte{}
-		valueList := [][]byte{}
-		for j := 0; j < batchCnt; j++ {
-			keyList = append(keyList, RandStr(keySz))
-			valueList = append(valueList, RandStr(valueSz))
-		}
-		pstart := time.Now()
-		wb := db.NewWriteBatch()
-		for j := 0; j < batchCnt; j++ {
-			wb.Set(keyList[j], valueList[j])
-		}
-		pend := time.Since(pstart)
-		btotalWriteTime = btotalWriteTime + float64(pend.Microseconds())
-		wstart := time.Now()
-		err := wb.Flush()
-		wend := time.Since(wstart)
-		if err != nil {
-			log.Fatal(err)
-		}
-		//fmt.Printf("badger write %d st data\n", i)
-		btotalWriteTime = btotalWriteTime + float64(wend.Microseconds())
+	keyList := [][]byte{}
+	valueList := [][]byte{}
+	for j := 0; j < batchCnt; j++ {
+		keyList = append(keyList, RandStr(keySz))
+		valueList = append(valueList, RandStr(valueSz))
 	}
-	btotalWriteTime = btotalWriteTime / float64(total)
-	//fmt.Printf("Total write time: %f μs/op\n", btotalWriteTime)
-	fmt.Println("Total time: ", time.Since(bstart))
+	pstart := time.Now()
+	wb := db.NewWriteBatch()
+	for j := 0; j < batchCnt; j++ {
+		wb.Set(keyList[j], valueList[j])
+	}
+	pend := time.Since(pstart)
+	keyList = nil
+	valueList = nil
+	btotalWriteTime += float64(pend.Microseconds())
+	wstart := time.Now()
+	err := wb.Flush()
+	wend := time.Since(wstart)
+	if err != nil {
+		log.Fatal(err)
+	}
+	btotalWriteTime += float64(wend.Microseconds())
+	btotalWriteSpeed := btotalWriteTime / float64(batchCnt)
 	db.Close()
-	return btotalWriteTime
+	return btotalWriteSpeed, btotalWriteTime
 }
 
 func BadgerConn() *badger.DB {
