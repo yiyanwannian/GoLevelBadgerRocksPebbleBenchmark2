@@ -13,7 +13,7 @@ import (
 
 var (
 	keySz        int  = 64
-	valueSz      int  = 1024
+	valueSz      int  = 10
 	dataCntRange int  = 10000
 	skip         int  = 1
 	batchCnt     int  = 1000
@@ -42,15 +42,19 @@ func bench_test(dataCnt int) (badgerTime float64) {
 	bstart := time.Now()
 	btotalWriteTime := float64(0)
 	for i := 0; i < dataCnt; i++ {
+		keyList := [][]byte{}
+		valueList := [][]byte{}
+		for j := 0; j < batchCnt; j++ {
+			keyList = append(keyList, RandStr(keySz))
+			valueList = append(valueList, RandStr(valueSz))
+		}
+		pstart := time.Now()
 		wb := db.NewWriteBatch()
 		for j := 0; j < batchCnt; j++ {
-			key := RandStr(keySz)
-			value := RandStr(valueSz)
-			pstart := time.Now()
-			wb.Set(key, value)
-			pend := time.Since(pstart)
-			btotalWriteTime = btotalWriteTime + float64(pend.Microseconds())
+			wb.Set(keyList[j], valueList[j])
 		}
+		pend := time.Since(pstart)
+		btotalWriteTime = btotalWriteTime + float64(pend.Microseconds())
 		wstart := time.Now()
 		err := wb.Flush()
 		wend := time.Since(wstart)

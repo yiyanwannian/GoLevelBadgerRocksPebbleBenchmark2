@@ -13,7 +13,7 @@ import (
 
 var (
 	keySz        int  = 64
-	valueSz      int  = 1024
+	valueSz      int  = 10
 	dataCntRange int  = 10000
 	skip         int  = 1
 	batchCnt     int  = 1000
@@ -44,15 +44,19 @@ func bench_test(dataCnt int) (rocksDBTime float64) {
 	rstart := time.Now()
 	rtotalWriteTime := float64(0)
 	for i := 0; i < dataCnt; i++ {
+		keyList := [][]byte{}
+		valueList := [][]byte{}
+		for j := 0; j < batchCnt; j++ {
+			keyList = append(keyList, RandStr(keySz))
+			valueList = append(valueList, RandStr(valueSz))
+		}
+		pstart := time.Now()
 		wb := gorocksdb.NewWriteBatch()
 		for j := 0; j < batchCnt; j++ {
-			key := RandStr(keySz)
-			value := RandStr(valueSz)
-			pstart := time.Now()
-			wb.Put(key, value)
-			pend := time.Since(pstart)
-			rtotalWriteTime = rtotalWriteTime + float64(pend.Microseconds())
+			wb.Put(keyList[j], valueList[j])
 		}
+		pend := time.Since(pstart)
+		rtotalWriteTime = rtotalWriteTime + float64(pend.Microseconds())
 		wstart := time.Now()
 		err := db.Write(wo, wb)
 		wend := time.Since(wstart)

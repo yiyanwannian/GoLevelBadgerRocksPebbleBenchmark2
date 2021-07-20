@@ -14,7 +14,7 @@ import (
 
 var (
 	keySz        int  = 64
-	valueSz      int  = 1024
+	valueSz      int  = 10
 	dataCntRange int  = 10000
 	skip         int  = 1
 	batchCnt     int  = 1000
@@ -43,15 +43,19 @@ func bench_test(dataCnt int) (leveldbTime float64) {
 	lstart := time.Now()
 	ltotalWriteTime := float64(0)
 	for i := 0; i < dataCnt; i++ {
+		keyList := [][]byte{}
+		valueList := [][]byte{}
+		for j := 0; j < batchCnt; j++ {
+			keyList = append(keyList, RandStr(keySz))
+			valueList = append(valueList, RandStr(valueSz))
+		}
+		pstart := time.Now()
 		batch := new(leveldb.Batch)
 		for j := 0; j < batchCnt; j++ {
-			key := RandStr(keySz)
-			value := RandStr(valueSz)
-			pstart := time.Now()
-			batch.Put(key, value)
-			pend := time.Since(pstart)
-			ltotalWriteTime = ltotalWriteTime + float64(pend.Microseconds())
+			batch.Put(keyList[j], valueList[j])
 		}
+		pend := time.Since(pstart)
+		ltotalWriteTime = ltotalWriteTime + float64(pend.Microseconds())
 		wstart := time.Now()
 		err := db.Write(batch, &opt.WriteOptions{Sync: sync})
 		wend := time.Since(wstart)
