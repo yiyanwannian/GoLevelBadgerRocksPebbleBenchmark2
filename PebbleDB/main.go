@@ -32,8 +32,8 @@ func main() {
 		fmt.Printf("total: %d, pebbleDBTime: %f μs/op\n",
 			(i+1)*batchCnt, pebbledbSpeeds[i])
 	}
-	fmt.Println()
 	fmt.Printf("Usage Time: %f μs\n", pebbledbTimes)
+	fmt.Println()
 }
 
 func bench_test() (pebbleDBSpeed, pebbleDBTime float64) {
@@ -45,16 +45,17 @@ func bench_test() (pebbleDBSpeed, pebbleDBTime float64) {
 		keyList = append(keyList, RandStr(keySz))
 		valueList = append(valueList, RandStr(valueSz))
 	}
-	pstart := time.Now()
+	wstart := time.Now()
+	//pstart := time.Now()
 	batch := db.NewBatch()
 	for j := 0; j < batchCnt; j++ {
 		batch.Set(keyList[j], valueList[j], &pebble.WriteOptions{Sync: sync})
 	}
-	pend := time.Since(pstart)
+	//pend := time.Since(pstart)
 	keyList = nil
 	valueList = nil
-	ptotalWriteTime += float64(pend.Microseconds())
-	wstart := time.Now()
+	//ptotalWriteTime += float64(pend.Microseconds())
+	//wstart := time.Now()
 	batch.Commit(&pebble.WriteOptions{Sync: sync})
 	wend := time.Since(wstart)
 	ptotalWriteTime += float64(wend.Microseconds())

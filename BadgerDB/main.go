@@ -33,8 +33,8 @@ func main() {
 		fmt.Printf("total: %d, badgerTime: %f μs/op\n",
 			(i+1)*batchCnt, badgerSpeeds[i])
 	}
-	fmt.Println()
 	fmt.Printf("Usage Time: %f μs\n", badgerTimes)
+	fmt.Println()
 }
 
 func bench_test() (badgerSpeed, badgerTime float64) {
@@ -46,16 +46,17 @@ func bench_test() (badgerSpeed, badgerTime float64) {
 		keyList = append(keyList, RandStr(keySz))
 		valueList = append(valueList, RandStr(valueSz))
 	}
-	pstart := time.Now()
+	//pstart := time.Now()
+	wstart := time.Now()
 	wb := db.NewWriteBatch()
 	for j := 0; j < batchCnt; j++ {
 		wb.Set(keyList[j], valueList[j])
 	}
-	pend := time.Since(pstart)
+	//pend := time.Since(pstart)
 	keyList = nil
 	valueList = nil
-	btotalWriteTime += float64(pend.Microseconds())
-	wstart := time.Now()
+	//btotalWriteTime += float64(pend.Microseconds())
+	//wstart := time.Now()
 	err := wb.Flush()
 	wend := time.Since(wstart)
 	if err != nil {

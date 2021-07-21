@@ -33,8 +33,8 @@ func main() {
 		fmt.Printf("total: %d, levelDBTime: %f μs/op\n",
 			(i+1)*batchCnt, leveldbSpeeds[i])
 	}
-	fmt.Println()
 	fmt.Printf("Usage Time: %f μs\n", leveldbTimes)
+	fmt.Println()
 }
 
 func bench_test() (leveldbSpeed, levelDBTime float64) {
@@ -46,16 +46,17 @@ func bench_test() (leveldbSpeed, levelDBTime float64) {
 		keyList = append(keyList, RandStr(keySz))
 		valueList = append(valueList, RandStr(valueSz))
 	}
-	pstart := time.Now()
+	wstart := time.Now()
+	//pstart := time.Now()
 	batch := new(leveldb.Batch)
 	for j := 0; j < batchCnt; j++ {
 		batch.Put(keyList[j], valueList[j])
 	}
-	pend := time.Since(pstart)
+	//pend := time.Since(pstart)
 	keyList = nil
 	valueList = nil
-	ltotalWriteTime += float64(pend.Microseconds())
-	wstart := time.Now()
+	//ltotalWriteTime += float64(pend.Microseconds())
+	//wstart := time.Now()
 	err := db.Write(batch, &opt.WriteOptions{Sync: sync})
 	wend := time.Since(wstart)
 	if err != nil {

@@ -32,8 +32,8 @@ func main() {
 		fmt.Printf("total: %d, rocksDBTimes: %f μs/op\n",
 			(i+1)*batchCnt, rocksDBSpeeds[i])
 	}
-	fmt.Println()
 	fmt.Printf("Usage Time: %f μs\n", rocksDBTimes)
+	fmt.Println()
 }
 
 func bench_test() (rocksDBSpeed, rocksDBTime float64) {
@@ -47,16 +47,17 @@ func bench_test() (rocksDBSpeed, rocksDBTime float64) {
 		keyList = append(keyList, RandStr(keySz))
 		valueList = append(valueList, RandStr(valueSz))
 	}
-	pstart := time.Now()
+	wstart := time.Now()
+	//pstart := time.Now()
 	wb := gorocksdb.NewWriteBatch()
 	for j := 0; j < batchCnt; j++ {
 		wb.Put(keyList[j], valueList[j])
 	}
-	pend := time.Since(pstart)
+	//pend := time.Since(pstart)
 	keyList = nil
 	valueList = nil
-	rtotalWriteTime += float64(pend.Microseconds())
-	wstart := time.Now()
+	//rtotalWriteTime += float64(pend.Microseconds())
+	//wstart := time.Now()
 	err := db.Write(wo, wb)
 	wend := time.Since(wstart)
 	if err != nil {
