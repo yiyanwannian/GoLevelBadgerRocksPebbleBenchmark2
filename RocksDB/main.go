@@ -22,7 +22,7 @@ var (
 func main() {
 	rocksDBTimes := float64(0)
 	rocksDBSpeeds := make([]float64, 0, dataCntRange)
-	for i := dataCntRange; i <= dataCntRange; i++ {
+	for i := 1; i <= dataCntRange; i++ {
 		bs, bt := bench_test()
 		rocksDBTimes += bt
 		rocksDBSpeeds = append(rocksDBSpeeds, bs)
@@ -30,7 +30,7 @@ func main() {
 
 	for i := 0; i < len(rocksDBSpeeds); i++ {
 		fmt.Printf("total: %d, rocksDBTimes: %f μs/op\n",
-			(i+dataCntRange)*batchCnt, rocksDBSpeeds[i])
+			(i+1)*batchCnt, rocksDBSpeeds[i])
 	}
 	fmt.Printf("Usage Time: %f μs\n", rocksDBTimes)
 	fmt.Println()

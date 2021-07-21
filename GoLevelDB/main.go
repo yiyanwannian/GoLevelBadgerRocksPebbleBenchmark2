@@ -23,7 +23,7 @@ var (
 func main() {
 	leveldbTimes := float64(0)
 	leveldbSpeeds := make([]float64, 0, dataCntRange)
-	for i := dataCntRange; i <= dataCntRange; i++ {
+	for i := 1; i <= dataCntRange; i++ {
 		bs, bt := bench_test()
 		leveldbTimes += bt
 		leveldbSpeeds = append(leveldbSpeeds, bs)
@@ -31,7 +31,7 @@ func main() {
 
 	for i := 0; i < len(leveldbSpeeds); i++ {
 		fmt.Printf("total: %d, levelDBTime: %f μs/op\n",
-			(i+dataCntRange)*batchCnt, leveldbSpeeds[i])
+			(i+1)*batchCnt, leveldbSpeeds[i])
 	}
 	fmt.Printf("Usage Time: %f μs\n", leveldbTimes)
 	fmt.Println()

@@ -23,7 +23,7 @@ func main() {
 
 	badgerTimes := float64(0)
 	badgerSpeeds := make([]float64, 0, dataCntRange)
-	for i := dataCntRange; i <= dataCntRange; i++ {
+	for i := 1; i <= dataCntRange; i++ {
 		bs, bt := bench_test()
 		badgerTimes += bt
 		badgerSpeeds = append(badgerSpeeds, bs)
@@ -31,7 +31,7 @@ func main() {
 
 	for i := 0; i < len(badgerSpeeds); i++ {
 		fmt.Printf("total: %d, badgerTime: %f μs/op\n",
-			(i+dataCntRange)*batchCnt, badgerSpeeds[i])
+			(i+1)*batchCnt, badgerSpeeds[i])
 	}
 	fmt.Printf("Usage Time: %f μs\n", badgerTimes)
 	fmt.Println()

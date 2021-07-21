@@ -22,7 +22,7 @@ var (
 func main() {
 	pebbledbTimes := float64(0)
 	pebbledbSpeeds := make([]float64, 0, dataCntRange)
-	for i := dataCntRange; i <= dataCntRange; i++ {
+	for i := 1; i <= dataCntRange; i++ {
 		bs, bt := bench_test()
 		pebbledbTimes += bt
 		pebbledbSpeeds = append(pebbledbSpeeds, bs)
@@ -30,7 +30,7 @@ func main() {
 
 	for i := 0; i < len(pebbledbSpeeds); i++ {
 		fmt.Printf("total: %d, pebbleDBTime: %f μs/op\n",
-			(i+dataCntRange)*batchCnt, pebbledbSpeeds[i])
+			(i+1)*batchCnt, pebbledbSpeeds[i])
 	}
 	fmt.Printf("Usage Time: %f μs\n", pebbledbTimes)
 	fmt.Println()
