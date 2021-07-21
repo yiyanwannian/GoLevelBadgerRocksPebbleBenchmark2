@@ -14,7 +14,7 @@ import (
 var (
 	keySz        int  = 64
 	valueSz      int  = 1024
-	dataCntRange int  = 10000
+	dataCntRange int  = 10
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -29,7 +29,7 @@ func main() {
 	}
 
 	for i := 0; i < dataCntRange; i++ {
-		fmt.Printf("total: %d, pebbleDBTime: %f μs/op",
+		fmt.Printf("total: %d, pebbleDBTime: %f μs/op\n",
 			(i+1)*batchCnt, pebbledbSpeeds[i])
 	}
 	fmt.Println()
@@ -64,7 +64,7 @@ func bench_test() (pebbleDBSpeed, pebbleDBTime float64) {
 }
 
 func PebbleConn() *pebble.DB {
-	db, err := pebble.Open("/tmp/pebbledbtest-0/dbbench", &pebble.Options{MaxConcurrentCompactions:4})
+	db, err := pebble.Open("../data/pebbledbtest-0/dbbench", &pebble.Options{MaxConcurrentCompactions: 4})
 	if err != nil {
 		log.Fatal(err)
 	}

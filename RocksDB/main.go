@@ -14,7 +14,7 @@ import (
 var (
 	keySz        int  = 64
 	valueSz      int  = 1024
-	dataCntRange int  = 10000
+	dataCntRange int  = 10
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -29,7 +29,7 @@ func main() {
 	}
 
 	for i := 0; i < dataCntRange; i++ {
-		fmt.Printf("total: %d, rocksDBTimes: %f μs/op",
+		fmt.Printf("total: %d, rocksDBTimes: %f μs/op\n",
 			(i+1)*batchCnt, rocksDBSpeeds[i])
 	}
 	fmt.Println()
@@ -73,7 +73,7 @@ func RocksDbConn() *gorocksdb.DB {
 	opts.SetCreateIfMissing(true)
 	opts.SetMaxBackgroundCompactions(4)
 	opts.SetMaxBackgroundFlushes(2)
-	db, err := gorocksdb.OpenDb(opts, "/tmp/rocksdbtest-0/dbbench")
+	db, err := gorocksdb.OpenDb(opts, "../data/rocksdbtest-0/dbbench")
 	if err != nil {
 		log.Fatal("err")
 	}

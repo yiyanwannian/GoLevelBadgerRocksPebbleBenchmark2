@@ -15,7 +15,7 @@ import (
 var (
 	keySz        int  = 64
 	valueSz      int  = 1024
-	dataCntRange int  = 10000
+	dataCntRange int  = 10
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -30,7 +30,7 @@ func main() {
 	}
 
 	for i := 0; i < dataCntRange; i++ {
-		fmt.Printf("total: %d, levelDBTime: %f μs/op",
+		fmt.Printf("total: %d, levelDBTime: %f μs/op\n",
 			(i+1)*batchCnt, leveldbSpeeds[i])
 	}
 	fmt.Println()
@@ -69,7 +69,7 @@ func bench_test() (leveldbSpeed, levelDBTime float64) {
 
 func GoLevelDbConn() *leveldb.DB {
 	opts := &opt.Options{NoSync: !sync}
-	db, err := leveldb.OpenFile("/tmp/leveldbtest-1/dbbench", opts)
+	db, err := leveldb.OpenFile("../data/leveldbtest-1/dbbench", opts)
 	if err != nil {
 		log.Fatal(err)
 	}

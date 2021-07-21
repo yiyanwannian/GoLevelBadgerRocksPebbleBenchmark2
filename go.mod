@@ -11,3 +11,5 @@ require (
 	github.com/syndtr/goleveldb v1.0.0
 	github.com/tecbot/gorocksdb v0.0.0-20191217155057-f0fad39f321c
 )
+
+replace github.com/dgraph-io/badger/v3 => ../../../github.com/dgraph-io/badger/

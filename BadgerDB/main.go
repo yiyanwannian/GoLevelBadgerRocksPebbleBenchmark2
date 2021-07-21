@@ -14,7 +14,7 @@ import (
 var (
 	keySz        int  = 64
 	valueSz      int  = 1024
-	dataCntRange int  = 10000
+	dataCntRange int  = 10
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -30,7 +30,7 @@ func main() {
 	}
 
 	for i := 0; i < dataCntRange; i++ {
-		fmt.Printf("total: %d, badgerTime: %f μs/op",
+		fmt.Printf("total: %d, badgerTime: %f μs/op\n",
 			(i+1)*batchCnt, badgerSpeeds[i])
 	}
 	fmt.Println()
@@ -68,7 +68,7 @@ func bench_test() (badgerSpeed, badgerTime float64) {
 }
 
 func BadgerConn() *badger.DB {
-	opts := badger.DefaultOptions("/tmp/badgertest-0/dbbench")
+	opts := badger.DefaultOptions("../data/badgertest-0/dbbench")
 	opts.SyncWrites = sync
 	db, err := badger.Open(opts)
 	if err != nil {
