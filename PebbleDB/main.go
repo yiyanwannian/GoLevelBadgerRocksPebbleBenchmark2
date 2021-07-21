@@ -13,7 +13,7 @@ import (
 
 var (
 	keySz        int  = 64
-	valueSz      int  = 10
+	valueSz      int  = 1024
 	dataCntRange int  = 10000
 	batchCnt     int  = 1000
 	sync         bool = true
@@ -64,7 +64,7 @@ func bench_test() (pebbleDBSpeed, pebbleDBTime float64) {
 }
 
 func PebbleConn() *pebble.DB {
-	db, err := pebble.Open("/tmp/pebbledbtest-0/dbbench", &pebble.Options{})
+	db, err := pebble.Open("/tmp/pebbledbtest-0/dbbench", &pebble.Options{MaxConcurrentCompactions:4})
 	if err != nil {
 		log.Fatal(err)
 	}

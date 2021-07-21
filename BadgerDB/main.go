@@ -13,7 +13,7 @@ import (
 
 var (
 	keySz        int  = 64
-	valueSz      int  = 10
+	valueSz      int  = 1024
 	dataCntRange int  = 10000
 	batchCnt     int  = 1000
 	sync         bool = true

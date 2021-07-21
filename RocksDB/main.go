@@ -13,8 +13,8 @@ import (
 
 var (
 	keySz        int  = 64
-	valueSz      int  = 10
-	dataCntRange int  = 100
+	valueSz      int  = 1024
+	dataCntRange int  = 10000
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -71,6 +71,8 @@ func bench_test() (rocksDBSpeed, rocksDBTime float64) {
 func RocksDbConn() *gorocksdb.DB {
 	opts := gorocksdb.NewDefaultOptions()
 	opts.SetCreateIfMissing(true)
+	opts.SetMaxBackgroundCompactions(4)
+	opts.SetMaxBackgroundFlushes(2)
 	db, err := gorocksdb.OpenDb(opts, "/tmp/rocksdbtest-0/dbbench")
 	if err != nil {
 		log.Fatal("err")
