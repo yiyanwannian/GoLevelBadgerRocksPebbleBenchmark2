@@ -14,7 +14,7 @@ import (
 var (
 	keySz        int  = 64
 	valueSz      int  = 1024
-	dataCntRange int  = 10
+	dataCntRange int  = 10000
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -23,15 +23,15 @@ func main() {
 
 	badgerTimes := float64(0)
 	badgerSpeeds := make([]float64, 0, dataCntRange)
-	for i := 1; i <= dataCntRange; i++ {
+	for i := dataCntRange; i <= dataCntRange; i++ {
 		bs, bt := bench_test()
 		badgerTimes += bt
 		badgerSpeeds = append(badgerSpeeds, bs)
 	}
 
-	for i := 0; i < dataCntRange; i++ {
+	for i := 0; i < len(badgerSpeeds); i++ {
 		fmt.Printf("total: %d, badgerTime: %f μs/op\n",
-			(i+1)*batchCnt, badgerSpeeds[i])
+			(i+dataCntRange)*batchCnt, badgerSpeeds[i])
 	}
 	fmt.Printf("Usage Time: %f μs\n", badgerTimes)
 	fmt.Println()

@@ -14,7 +14,7 @@ import (
 var (
 	keySz        int  = 64
 	valueSz      int  = 1024
-	dataCntRange int  = 10
+	dataCntRange int  = 10000
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -22,15 +22,15 @@ var (
 func main() {
 	pebbledbTimes := float64(0)
 	pebbledbSpeeds := make([]float64, 0, dataCntRange)
-	for i := 1; i <= dataCntRange; i++ {
+	for i := dataCntRange; i <= dataCntRange; i++ {
 		bs, bt := bench_test()
 		pebbledbTimes += bt
 		pebbledbSpeeds = append(pebbledbSpeeds, bs)
 	}
 
-	for i := 0; i < dataCntRange; i++ {
+	for i := 0; i < len(pebbledbSpeeds); i++ {
 		fmt.Printf("total: %d, pebbleDBTime: %f μs/op\n",
-			(i+1)*batchCnt, pebbledbSpeeds[i])
+			(i+dataCntRange)*batchCnt, pebbledbSpeeds[i])
 	}
 	fmt.Printf("Usage Time: %f μs\n", pebbledbTimes)
 	fmt.Println()

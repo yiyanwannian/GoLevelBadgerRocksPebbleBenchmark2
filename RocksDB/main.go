@@ -14,7 +14,7 @@ import (
 var (
 	keySz        int  = 64
 	valueSz      int  = 1024
-	dataCntRange int  = 10
+	dataCntRange int  = 10000
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -22,15 +22,15 @@ var (
 func main() {
 	rocksDBTimes := float64(0)
 	rocksDBSpeeds := make([]float64, 0, dataCntRange)
-	for i := 1; i <= dataCntRange; i++ {
+	for i := dataCntRange; i <= dataCntRange; i++ {
 		bs, bt := bench_test()
 		rocksDBTimes += bt
 		rocksDBSpeeds = append(rocksDBSpeeds, bs)
 	}
 
-	for i := 0; i < dataCntRange; i++ {
+	for i := 0; i < len(rocksDBSpeeds); i++ {
 		fmt.Printf("total: %d, rocksDBTimes: %f μs/op\n",
-			(i+1)*batchCnt, rocksDBSpeeds[i])
+			(i+dataCntRange)*batchCnt, rocksDBSpeeds[i])
 	}
 	fmt.Printf("Usage Time: %f μs\n", rocksDBTimes)
 	fmt.Println()

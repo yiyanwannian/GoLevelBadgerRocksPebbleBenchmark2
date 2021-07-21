@@ -15,7 +15,7 @@ import (
 var (
 	keySz        int  = 64
 	valueSz      int  = 1024
-	dataCntRange int  = 10
+	dataCntRange int  = 10000
 	batchCnt     int  = 1000
 	sync         bool = true
 )
@@ -23,15 +23,15 @@ var (
 func main() {
 	leveldbTimes := float64(0)
 	leveldbSpeeds := make([]float64, 0, dataCntRange)
-	for i := 1; i <= dataCntRange; i++ {
+	for i := dataCntRange; i <= dataCntRange; i++ {
 		bs, bt := bench_test()
 		leveldbTimes += bt
 		leveldbSpeeds = append(leveldbSpeeds, bs)
 	}
 
-	for i := 0; i < dataCntRange; i++ {
+	for i := 0; i < len(leveldbSpeeds); i++ {
 		fmt.Printf("total: %d, levelDBTime: %f μs/op\n",
-			(i+1)*batchCnt, leveldbSpeeds[i])
+			(i+dataCntRange)*batchCnt, leveldbSpeeds[i])
 	}
 	fmt.Printf("Usage Time: %f μs\n", leveldbTimes)
 	fmt.Println()
